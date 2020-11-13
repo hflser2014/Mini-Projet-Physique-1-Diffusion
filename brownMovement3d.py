@@ -16,16 +16,23 @@ def matDraw(position, i1):
     plt.clf()
 
 
-def mayaviDraw(position):
-    coor = [position[-1][0], position[-1][1], position[-1][2]]
+def mayaviDraw(position,dimension):
+    a0=range(0,dimension[2],5)
+    a = a0
+    for i in range(len(a)-1):
+        a = a+a0
+    x = position[-1][0]
+    x.extend(a)
+    y = position[-1][1]
+    y.extend(a)
+    z = position[-1][2]
+    z.extend(a)
+
+    coor = [x, y, z]
 
     coor = np.stack(coor, axis=0)
     kde = stats.gaussian_kde(coor)
     density = kde(coor)
-
-    x = position[-1][0]
-    y = position[-1][1]
-    z = position[-1][2]
 
     mlab.figure('DensityPlot')
     mlab.points3d(x, y, z, density, scale_mode='none', scale_factor=0.07)
@@ -34,11 +41,7 @@ def mayaviDraw(position):
     mlab.clf()
 
 
-def brownMovement3d(N, t, n, dimension=(0, 0, 0)):
-    plt.ion()  # matplotlib interactivate mode
-    fig = plt.figure()
-
-    
+def gen3d(N, t, n, dimension=(50, 50, 50)):
     x, y, z = dimension[0]/2, dimension[1]/2, dimension[2]/2
     position = [[[x], [y], [z]]]
     disArray = []
@@ -66,13 +69,26 @@ def brownMovement3d(N, t, n, dimension=(0, 0, 0)):
             z = position[i1][2][i2]
 
             disArray[i1].append((x**2 + y**2 + z**2)**0.5)
+            disArrayMean.append(np.mean(np.array(disArray[i1])))  #计算平均速度
+    return position,disArrayMean,N
 
-        ax = plt.subplot(121, projection='3d')
-        vt = fig.add_subplot(122)
+def drawDP(input):
+    disArray=input[1]
+    N = input[2]
+    #plt.ion()
+    fig = plt.figure()
+    vt = fig.add_subplot(111)
+    for i in range(len(disArray)):
+        vt.plot(np.linspace(0, (i + 1) / N, i + 1), disArray[0:i+1])
+        plt.show()
+        plt.pause(1)
+        plt.clf()
+    '''
+    plt.ion()  # matplotlib interactivate mode
+    fig = plt.figure()
 
-        disArrayMean.append(np.mean(np.array(disArray[i1])))  #计算平均速度
-        vt.plot(np.linspace(0, (i1 + 1) / N, i1 + 1), disArrayMean)
-            #'''
+            ax = plt.subplot(121, projection='3d')
+
         ax.set_xlim3d([-50, 50])
         ax.set_ylim3d([-50, 50])
         ax.set_zlim3d([-50, 50])
@@ -82,8 +98,7 @@ def brownMovement3d(N, t, n, dimension=(0, 0, 0)):
         plt.pause(1)
         plt.clf()
         #matDraw(position,i1)
-        #mayaviDraw(position)
+        #mayaviDraw(position,dimension)
     plt.show()
-
-
-brownMovement3d(1000, 1000, 100000)
+'''
+drawDP(gen3d(10, 1, 10))
