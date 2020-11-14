@@ -87,7 +87,7 @@ def drawDP(input):
     plt.ion()  # matplotlib interactivate mode
     fig = plt.figure()
 
-            ax = plt.subplot(121, projection='3d')
+        ax = plt.subplot(121, projection='3d')
 
         ax.set_xlim3d([-50, 50])
         ax.set_ylim3d([-50, 50])
