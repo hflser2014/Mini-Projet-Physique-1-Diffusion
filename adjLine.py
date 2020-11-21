@@ -4,19 +4,20 @@ from scipy.optimize import curve_fit
 import matplotlib.ticker as ticker
 
 
-def func(x, a,x0):
-    return (x-x0)**a
+def func(x, a, k):
+    return k*x**a
+
 
 def output(xArray, yArray):
-#    ax = plt.gca()
+    #    ax = plt.gca()
     # plt.style.use('seaborn')
 
-    popt, pcov = curve_fit(func, xArray, yArray,maxfev=500000)
+    popt, pcov = curve_fit(func, xArray, yArray, maxfev=500000)
     a = popt[0]
-    x0=popt[1]
-    print(a)
+    k = popt[1]
+    print(a, k)
     x = np.linspace(xArray[0], xArray[-1], 1000)
-    y = func(x, a,x0)
+    y = func(x, a, k)
     '''
     for (a,b) in zip(xArray,yArray):
         plt.plot([0,a],[b,b],linewidth=1,linestyle='--',color='gray')
