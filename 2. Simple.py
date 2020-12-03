@@ -11,7 +11,7 @@ m = 50
 # Maximum numbter of iterations.
 nitmax = 200
 # Number of particles in the simulation.
-nparticles = 5000
+nparticles = 500
 # Output a frame (plot image) every nevery iterations.
 nevery = 2
 # Constant maximum value of z-axis value for plots.
@@ -21,10 +21,11 @@ zmax = 30
 fig = plt.figure()
 plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False
-p1 = fig.add_subplot(221, projection='3d')
-p2 = fig.add_subplot(222)
-p3 = fig.add_subplot(223)
-p4 = fig.add_subplot(224)
+p1 = fig.add_subplot(321, projection='3d')
+p2 = fig.add_subplot(322)
+p3 = fig.add_subplot(312)
+p4 = fig.add_subplot(325)
+p5 = fig.add_subplot(326)
 
 # We'll need a meshgrid to plot the surface: this is X, Y.
 x = y = np.linspace(1, m, m)
@@ -40,6 +41,7 @@ locs = np.ones((nparticles, 2), dtype=int) * m//2
 disArray = []
 disArrayMean = []
 listVariance = []
+listEntropy = []
 locsArray = []
 
 
@@ -70,11 +72,11 @@ def calcEntropy(locs):
 
     mean = np.mean(frame, axis=0)
     mean = np.mean(mean, axis=0)
-    Variance = 0
+    entropy = 0
     for i1 in frame:
         for i2 in i1:
-            Variance -= constants.k*i2*np.log(i2)
-    return Variance
+            entropy -= constants.k*i2*np.log(i2)
+    return entropy
 
     # listVariance.append(Variance)
 
@@ -102,7 +104,6 @@ for j in range(nitmax):
             if 0 <= x < m and 0 <= y < m:
                 grid[x, y] += 1
 
-        '''
         # calculate the variance of the system
         mean = np.mean(np.mean(grid))
         for i1 in grid:
@@ -110,13 +111,12 @@ for j in range(nitmax):
                 Variance = Variance + (i2-mean)**2
         Variance /= x*y
         listVariance.append(Variance)
-        '''
 
         print(j+1, '/', nitmax)
 
         disArrayMean.append(np.mean(np.array(disArray[-1])))  # 计算平均速度
         locsArray.append(locs.T.copy())
-        listVariance.append(calcEntropy(locs.T))
+        listEntropy.append(calcEntropy(locs.T))
 
         # Now clear the Axes of any previous plot and make a new surface plot.
         p1.clear()
@@ -124,7 +124,7 @@ for j in range(nitmax):
         p3.clear()
         p4.clear()
 
-        p1.set_title("分布密度图象")
+        p1.set_title("Graph de ")
         p1.plot_surface(X, Y, grid, rstride=1, cstride=1, cmap=plt.cm.autumn,
                         linewidth=1, vmin=vmin, vmax=vmax, norm=norm)
         p1.set_zlim(0, zmax)
@@ -140,7 +140,10 @@ for j in range(nitmax):
         p3.plot(range(len(disArrayMean)), disArrayMean, color="red")
 
         p4.set_title("熵关于时间变化图象")
-        p4.plot(range(len(listVariance)), listVariance, color="royalblue")
+        p4.plot(range(len(listEntropy)), listEntropy, color="royalblue")
+
+        p5.set_title("方差关于时间变化图象")
+        p5.plot(range(len(listVariance)), listVariance, color="royalblue")
 
         plt.pause(0.000001)
 
@@ -148,4 +151,5 @@ p1.clear()
 p2.clear()
 p3.clear()
 p4.clear()
+
 adjLine.output(range(len(disArrayMean)), disArrayMean)

@@ -34,7 +34,8 @@ def output(xArray, yArray):
     ax.spines['left'].set_position(('data', 0))
     # plt.text(0.025,0.05,"y = %fx+%f"%(k,b))
     '''
-    plot1 = plt.scatter(xArray, yArray, marker='o')
-    plot2 = plt.plot(x, y)
-    plt.grid()
+    p6 = fig.add_subplot(111)
+    p6.scatter(xArray, yArray, marker='o')
+    p6.plot(x, y)
+    p6.grid()
     plt.show()
